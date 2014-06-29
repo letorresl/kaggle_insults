@@ -1,4 +1,7 @@
 import numpy as np
+import time
+from sklearn.metrics import roc_auc_score, make_scorer
+from multiprocessing import cpu_count
 from sklearn.feature_extraction.text import CountVectorizer
 #from sklearn.feature_extraction.text import TfidfVectorizer
 #from sklearn.cross_validation import train_test_split
@@ -13,6 +16,7 @@ from IPython.core.debugger import Tracer
 
 tracer = Tracer()
 
+inicio = time.time()
 
 def load_data():
     print("loading")
@@ -98,8 +102,10 @@ def grid_search():
     #param_grid = dict(max_depth=np.arange(1, 20), max_features=['sqrt', 'log2', None])
     #clf = RandomForestClassifier(n_estimators=10)
 
-    grid = GridSearchCV(clf, cv=5, param_grid=param_grid, verbose=4,
-            n_jobs=11)
+    puntuador = make_scorer(roc_auc_score, greater_is_better=True)
+    numerocpus = cpu_count()
+    grid = GridSearchCV(clf, cv=5, param_grid=param_grid, verbose=4, scoring=puntuador,
+            n_jobs=numerocpus)
     #print(cross_val_score(clf, counts, labels, cv=3))
 
     grid.fit(features, labels)
@@ -107,10 +113,15 @@ def grid_search():
     print(grid.best_params_)
     #clf.fit(X_train, y_train)
     #print(clf.score(X_test, y_test))
-    tracer()
+    #tracer()
     comments_test, dates_test = load_test()
     prob_pred = grid.best_estimator_.predict_proba(comments_test)
     write_test(prob_pred[:, 1])
 
 if __name__ == "__main__":
     grid_search()
+
+
+final = time.time()
+tiempoTotal = final - inicio
+print tiempoTotal
