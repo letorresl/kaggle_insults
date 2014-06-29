@@ -1,4 +1,7 @@
 import numpy as np
+import time
+from sklearn.metrics import roc_auc_score, make_scorer
+from multiprocessing import cpu_count
 from sklearn.feature_extraction.text import CountVectorizer
 #from sklearn.feature_extraction.text import TfidfVectorizer
 #from sklearn.cross_validation import train_test_split
@@ -10,8 +13,6 @@ from sklearn.pipeline import Pipeline
 #from scipy import sparse
 #from sklearn.ensemble import RandomForestClassifier
 from IPython.core.debugger import Tracer
-
-tracer = Tracer()
 
 
 def load_data():
@@ -66,7 +67,7 @@ def grid_search():
     comments, dates, labels = load_data()
 
     print("vecorizing")
-    countvect = CountVectorizer(max_n=3)
+    countvect = CountVectorizer(ngram_range=(1,3))
     #countvect = TfidfVectorizer()
 
     #counts = countvect.fit_transform(comments)
@@ -80,7 +81,7 @@ def grid_search():
     #print("training")
     param_grid = dict(logr__C=2. ** np.arange(-6, 4),
             logr__penalty=['l1', 'l2'],
-            vect__max_n=np.arange(1, 4), vect__lowercase=[True, False])
+            vect__ngram_range=[(1,1),(1,2),(1,3),(1, 4)], vect__lowercase=[True, False])
     #clf = LinearSVC(tol=1e-8, penalty='l1', dual=False, C=0.5)
     clf = LogisticRegression(tol=1e-8)
     pipeline = Pipeline([('vect', countvect), ('logr', clf)])
@@ -90,18 +91,24 @@ def grid_search():
     #param_grid = dict(max_depth=np.arange(1, 10))
     #clf = RandomForestClassifier(n_estimators=10)
 
-    grid = GridSearchCV(pipeline, cv=5, param_grid=param_grid, verbose=4,
-            n_jobs=11)
+    numerocpus = cpu_count()
+    puntuador = make_scorer(roc_auc_score, greater_is_better = True)
+    grid = GridSearchCV(pipeline, cv=2, param_grid=param_grid, verbose=4, scoring=puntuador,
+            n_jobs=numerocpus)
     #print(cross_val_score(clf, counts, labels, cv=3))
 
     grid.fit(comments, labels)
     #clf.fit(X_train, y_train)
     #print(clf.score(X_test, y_test))
-    comments_test, dates_test = load_test()
-    counts_test = countvect.transform(comments_test)
+    #comments_test, dates_test = load_test()
+    #counts_test = countvect.transform(comments_test)
     prob_pred = grid.best_estimator_.predict_proba(counts_test)
-    tracer()
     write_test(prob_pred[:, 1])
 
 if __name__ == "__main__":
+    inicio = time.time()
+    tracer = Tracer()
     grid_search()
+    final = time.time()
+    tiempoTotal = final - inicio
+    print tiempoTotal
