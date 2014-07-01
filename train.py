@@ -1,4 +1,7 @@
 import numpy as np
+import time
+from sklearn.metrics import roc_auc_score, make_scorer
+from multiprocessing import cpu_count
 from sklearn.feature_extraction.text import CountVectorizer
 #from sklearn.feature_extraction.text import TfidfVectorizer
 #from sklearn.cross_validation import train_test_split
@@ -10,8 +13,6 @@ from sklearn.linear_model import LogisticRegression
 from scipy import sparse
 #from sklearn.ensemble import RandomForestClassifier
 from IPython.core.debugger import Tracer
-
-tracer = Tracer()
 
 
 def load_data():
@@ -63,6 +64,7 @@ def write_test(labels, fname="test_prediction.csv"):
 
 
 def grid_search():
+    tracer = Tracer()
     comments, dates, labels = load_data()
 
     # get the google bad word list
@@ -73,7 +75,7 @@ def grid_search():
     comments.append(badword_doc)
 
     #countvect = CountVectorizer(max_n=2, analyzer="char")
-    countvect = CountVectorizer(max_n=2)
+    countvect = CountVectorizer(ngram_range=(1,2))
     counts = countvect.fit_transform(comments).tocsr()
     badword_counts = counts[-1, :]
     counts = counts[:-1, :]
@@ -102,10 +104,9 @@ def grid_search():
     ## double exlamation marks
     #excl2 = [comment.count("!!") for comment in comments]
 
-    tracer()
     #countvect = TfidfVectorizer()
 
-    print("vecorizing")
+    print("vectorizing")
     #counts_array = counts.toarray()
     #indicators = sparse.csr_matrix((counts_array > 0).astype(np.int))
 
@@ -126,19 +127,25 @@ def grid_search():
     #param_grid = dict(max_depth=np.arange(1, 10))
     #clf = RandomForestClassifier(n_estimators=10)
 
-    grid = GridSearchCV(clf, cv=5, param_grid=param_grid, verbose=4,
-            n_jobs=11)
+    puntuador = make_scorer(roc_auc_score, greater_is_better = True)
+    numerocpus = cpu_count()
+    grid = GridSearchCV(clf, cv=2, param_grid=param_grid, verbose=4, scoring=puntuador,
+            n_jobs=numerocpus)
     #print(cross_val_score(clf, counts, labels, cv=3))
 
     #grid.fit(counts, labels)
     grid.fit(features, labels)
     #clf.fit(X_train, y_train)
     #print(clf.score(X_test, y_test))
-    tracer()
+    #tracer()
     comments_test, dates_test = load_test()
     counts_test = countvect.transform(comments_test)
     prob_pred = grid.best_estimator_.predict_proba(counts_test)
     write_test(prob_pred[:, 1])
 
 if __name__ == "__main__":
+    inicio = time.time()
     grid_search()
+    final = time.time()
+    tiempoTotal = final - inicio
+    print("El tiempo de ejecucion transcurrido fue de: " + str(tiempoTotal) + " segundos.")
