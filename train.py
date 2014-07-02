@@ -195,7 +195,7 @@ if __name__ == "__main__":
     
     print("El tiempo de ejecucion transcurrido fue de: " + str(tiempoTotal) + " segundos.")
     with open("resultados.txt",'a') as archivo:
-        archivo.write("*** " + str(datetime.now(tiempoMexico)) + "\t*** " + nombrehost +  "\n\n")
+        archivo.write("*** " + str(datetime.now(tiempoMexico)) + "\t*** " + gethostname() +  "\n\n")
         archivo.write("\tEl tiempo de ejecucion transcurrido fue de: " + str(tiempoTotal) + " segundos.\n")
         archivo.write ("\tEl modelo utilizado fue:\n\t\t" + str(rejilla.best_estimator_) )
         archivo.write("\n\tEl cual tuvo una AUC de: " + str(rejilla.best_score_) + "\n\n")
