@@ -62,3 +62,11 @@
           intercept_scaling=1, penalty=l1, random_state=None, tol=1e-08)
 	El cual tuvo una AUC de: 0.774385034944
 
+*** 2014-07-02 00:24:25.194467-05:00	*** ip-10-225-129-86
+
+	El tiempo de ejecucion transcurrido fue de: 52.3910970688 segundos.
+	El modelo utilizado fue:
+		LogisticRegression(C=4.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, penalty=l1, random_state=None, tol=1e-08)
+	El cual tuvo una AUC de: 0.773735858473
+
