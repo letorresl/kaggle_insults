@@ -1,0 +1,32 @@
+*** 2014-07-01 19:53:26.396085-05:00
+
+	El tiempo de ejecucion transcurrido fue de: 64.8684298992 segundos.
+	El modelo utilizado fue:
+		LogisticRegression(C=8.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, penalty=l2, random_state=None, tol=1e-08)
+	El cual tuvo una AUC de: 0.75304418494
+
+*** 2014-07-01 19:55:47.726509-05:00
+
+	El tiempo de ejecucion transcurrido fue de: 72.8010179996 segundos.
+	El modelo utilizado fue:
+		LogisticRegression(C=8.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, penalty=l2, random_state=None, tol=1e-08)
+	El cual tuvo una AUC de: 0.75304418494
+
+*** 2014-07-01 20:03:53.256391-05:00
+
+	El tiempo de ejecucion transcurrido fue de: 71.2217431068 segundos.
+	El modelo utilizado fue:
+		LogisticRegression(C=8.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, penalty=l2, random_state=None, tol=1e-08)
+	El cual tuvo una AUC de: 0.75304418494
+
+*** 2014-07-01 20:10:14.393270-05:00
+
+	El tiempo de ejecucion transcurrido fue de: 51.9688839912 segundos.
+	El modelo utilizado fue:
+		LogisticRegression(C=8.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, penalty=l2, random_state=None, tol=1e-08)
+	El cual tuvo una AUC de: 0.75304418494
+
